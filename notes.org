@@ -1,0 +1,970 @@
+#+TODO: TODO STUDY | COMPLETED
+#+LaTeX_CLASS_OPTIONS: [10pt]
+dejohnso@cs.utah.edu
+
+* Table of Contents
+** [[Tuesday August 22]]
+** [[Thursday August 24]]
+** [[Tuesday August 29]]
+** [[Thursday August 31]]
+** [[Tuesday September 5]]
+** [[Thursday September 7]]
+** [[Tuesday September 12]]
+** [[Thursday September 14]]
+** [[Tuesday September 19]]
+* Tuesday August 22
+** Course Overview and Mechanics
+   Engineering is about process
+   Engineering is concerned with safety, reliability, quality, project success
+*** Topics in 3505
+    - Get comfortable with C++
+    - Tool Chains
+      - modern software development uses a huge number of tools
+    - Terminal/Text-editor development
+    - Medium weight IDE
+    - Versioning tools
+    - Documentation tools
+    - Group work tools
+    - Development in larger systems
+      - skills in fitting in with existing code
+    - Small team development
+    - Small-team methodologies
+    - Idioms and Design Patterns
+*** Lab Section
+    - Structured / TA led
+    - technical material and practice
+*** Exams
+    - 2 midterms not cumulative
+    - No final
+*** Late Penalties
+    - 15 off for less than a day, 30 for 24-48, 0 for 48
+*** Texts
+    - All Online resources
+*** Grade Weight
+    - Exams (30%)
+    - Homework (60%)
+    - Labs and Online Excercises (10%)
+** C++ Introduction
+*** C Principles
+    C was invented during a time when every byte and every cycle mattered
+*** C++ Principles
+    FUNCTION EXAMPLE
+    #+begin_src C++
+// function example
+#include <iostream>
+using namespace std;
+
+int addition (int a, int b)
+{
+  int r;
+  r = a+b;
+  return r;
+}
+
+int main ()
+{
+  int z;
+  z = addition (5,3);
+  cout << "The result is " << z;
+}
+    #+end_src
+The result is 8
+
+* Thursday August 24
+
+** Basic IO
+   + Programs run form the terminal have
+     - standard input
+     - standard output
+     - standard error
+   + These are streams
+     - a stream is serial access to a sequence of characters
+       - file
+       - user
+       - network
+       - strings
+
+*** IO streams
+    + There are predefined streams in C++ that match up
+      - std::(cin / cout / cerr)
+    + These can be piped or redirected on the command line
+      - > redirects
+      - < puts in a file
+      - | stdout of ls to stdin of second program
+    + Programs can insert characters onto those streams or extract from them
+      - cout << 'Hello'
+      - cin >> anIntegerVairable
+    + >> is the extraction operator
+      int score;
+      cin >> score;
+      cin << endl; --> prints to user stdout
+    + You need to tell C++ that the program will be using these streams
+      - #include <iostream>
+
+
+     ### lect2inclass.h ###
+    #+begin_src C++
+    #include <iostream>
+    using namespace std;
+    int main(){
+    int inputVal;
+    cout << "Please Input an integer: ";
+
+    if(cin.fail())
+    {
+       cout << "you messed up " << endl;
+    }
+
+    cin >> inputVal;
+    cout << inputVal << endl;
+
+    }
+    #+end_src
+
+    compiles just like a C program
+
+*** Insertion and Extraction
+    + if you try to extract an int from a part of a stream that is not an int,
+      it will fail
+      #+begin_c C++
+      if(cin >> myInt) {}
+      #+end_c
+    + Extraction returns false at EOF, (EOF is generated with C-d)
+
+** Scope, Pointers, Reference, Stack Frame
+
+*** Variable Creation
+    + What happens when you delare and initialize a variable?
+      int var = 5;
+      - Space is reserved for the variable on the stack.
+      - Space has an address, and the value is placed at that location
+    + Additional variables grow the stack
+      - an area of memory for each process
+
+*** Function Calling
+    + Function call stores
+      - where to return
+      - parameters
+      - local variables
+    + Functions in C++ are pass-by-value
+      - arrays are the special case since they are expensive to copy
+        (pass by pointer)
+    #+begin_src C++
+      int A(int param1) {
+         int local1 = 5;
+         return local1;
+      }
+      int main(){
+         int mVar = 1;
+         mVar = A(mVar);
+         return 0;
+      }
+    #+end_src
+*** Compilier Issues
+    + How does the compiler know where VAR is next time it sees it?
+      - Keeps a table of this information (stack pointer + offset)
+      - real addresses are not assigned until later
+      - even then, those are virtual addresses in the process address space
+
+*** Scope of Variables
+    + Variables only exist in their enclosing {}
+      - parameters are considered part of the fn body scope
+      - implic global space without {}
+
+*** Addresses
+    #+begin_src C++
+    void A() {
+       int x;
+       cout << "Made A_x at " << &x << endl;
+    }
+    int main() {
+       A();
+    }
+    #+end_src
+    ### returns hex address of x ###
+
+    + &localvar will return the address of localvar (like C)
+    + Store address in a pointer variable
+      - type is a base type with an *
+        - Like int* p or int *p
+      #+begin_src C++
+      int var = 5;
+      int* varAddress = &var
+      #+end_src
+    + Pointers can be used to make arguments mutable
+      - the pointer is a constant, the thing it points to is not
+    + Can access the thing the pointer is pointing at with a *
+      (Derefernce Operator)
+
+*** C++ References
+    + References are a safe way to "point at another object"
+      (pass by reference / pointer )
+    + Reference type shares memory location in compiler table
+| Character\Use | Operator          | Type Modfier    |
+|---------------+-------------------+-----------------|
+| *             | dereference(*val) | pointer(int*)   |
+| &             | reference(&val)   | reference(int&) |                |                   |                 |
+
+
+
+* Tuesday August 29
+  Look at point.cpp for a grand implementation
+
+** C++ Classes
+*** Major Principles
+     - Encapsulation
+     - Abstraction
+     - Inheritance
+     - Polymorphism
+
+   + C is a fundamental style language
+     - Function headers can get messy
+
+*** Class Basics
+     - Class Definition
+       #+begin_src C++
+       class Point {  };
+       #+end_src
+      Point becomes a new type to use
+      #+begin_src C++
+      Point mypoint;
+      #+end_src
+     - Keyword class
+     - Data members (instance variables)
+       - Make private data member
+       #+begin_src C++
+       private: double x, y;
+       #+end_src
+       - Keywords
+         - private: only access from class code
+         - public: accessible to all code
+         - protected: access to class code and derived classes
+       - Sets access mode until next access keyword. Default start is private
+     - Constructor
+       - When you declare and object variable, memory is reserved for its
+         member variables
+       System automatically makes a default constructor
+       unless you create a custom one
+       - You can overload the constructor to take parameters
+         #+begin_src C++
+         class Point {
+         private:
+            double x, y; // Data members
+         public:
+            Point(double initx, double inity) {
+               x = initx;
+               y = inity;
+            }
+         };
+         int main(){
+            Point myPoint(2.0, 3.0);
+         }
+         #+end_src
+         compile using 'g++ -std=c++11 -o point point.cpp'
+         run using './point'
+     + Class Methods typically fall into a few categories
+       - Constructors
+       - Setters / Getters
+       - Operators
+       - Normal methods
+
+*** Overloding
+    + Math Overloading
+      #+begin_src C++
+      class Point {
+      public:
+         Point operator* (double scaleFactor) { // Only overloads a Point * a double
+             Point res;
+             res.x = x * scaleFactor;
+             res.y = y * scaleFactor;
+
+             return res;
+         };
+      };
+      #+end_src
+    + << Overloading
+            #+begin_src C++
+      ostream& operator<< (osstream& output, Point pt) { // Only overloads a Point * a double
+          output << "{" << pt.x << "," << pt.y << "}";
+          return output ;
+         };
+      #+end_src
+** C-style Struct
+   + Collect related information into a named type structure
+   + Declare variables of that type
+   #+begin_src C++
+   struct HealthInfo {
+      int id;
+      double weight;
+      bool rideMotorcycle;
+      bool smoke;
+   }
+   #+end_src
+   However, Access is still an issue
+   #+begin_src C++
+   HealthInfo dj;
+   dj.age = -10;
+   dj.drinks = ?;
+   #+end_src
+   + The data is still not encapsulated and shielded from direct manipulation
+   + Struct fails abstraction, (internal representaion has to be known)
+** C++ Arrays
+*** Basics
+   + Can dynamically allocate an array
+     #+begin_src C++
+     int *x = new int[10];
+     x[0] = 5;
+     #+end_src
+   + Special Delete
+     #+begin_src C++
+     delete [] x;
+     #+end_src
+   + Pointer math - C++ knows the underlying size
+     #+begin_src C++
+     x++;
+     *(x + 1);
+     #+end_src
+*** Problems
+     - Memory leak
+       - For every new called, need a delete
+     - End of the program cleans up your messes
+       - DO NOT RELY ON THAT
+** Function Return Styles
+   + int getVal()
+     - The value of the exporession in the return is copied and returned
+       to the calling code
+   + int& getVal()
+     - A reference to the return object is returned. This cannot be to a local
+       leaving function scope
+   + int* getVal()
+     - A pointer to an int is returned. The return has to be an address to
+       soething and that something should not be only in function scope
+* Thursday August 31
+** Destructors
+   + Desutructors are called when an object leaves scope or delete is called on an object
+   + Looks Like
+     ~Point() { stuff }
+   + Destructors are needed when the class has acquired resources that need to be cleaned up
+     - memory
+     - open files / network connections / etc.
+** Creating Instances of a Class
+   + Local variables - destructed when leave scope
+     - Defualt constructor
+       - Point localPt;
+     - Overloaded Constructor
+       - Point localPt(1,2);
+   + Dynamic Allocation - persist until deleted
+     - New
+       - Point *dynPt = new Point(1,2);
+     - Delete
+       - delete dynPt
+** #Include
+   + #include is an example of a preprocessor directive - it tells the compilier to do something
+
+   + Two main versions
+     - #include <systemheader>
+       - Searches in known locations for systemheader
+     - #include 'myLocal.h'
+       - looks in local directory and specefied project locations
+
+    Definitions in Ex.h
+    #+begin_src C++
+    class Ex {
+        int x_;      // data member
+    public:
+        Ex(int x);   // Constructor
+    }
+    #+end_src
+    Implementation of Constructor in Ex.cpp
+    #+begin_src C++
+    Ex::Ex(int x) : x_(x) { }
+    #+end_src
+    Class name :: Name of function
+** g++ Compilation
+   + g++ really does two things
+     - Comple the source
+     - Link files together
+
+   Object Files (aka compile without linking)
+   + g++ -c point.cpp
+   + This makes an object file point.o which is the compilied code ready for linking
+** Make files
+   Compilation of Multi-file projects will grow quickly and get unwieldy
+   + Make
+     - A system for compiling projects
+     - Uses a makefile to defined compilation rules
+     - Speeds compilation by only redoing 'touched' files
+   + Basic setup
+     - "Thing to make": "what it depends on": "How to make it"
+
+   + A simple makefile for point is
+     - point: main.cpp point.h point.cpp
+              g++ -o point main.cpp point.cpp
+
+   Typing 'make' or 'make point' to compile
+
+   More Advanced
+   + Define Compilation properties with variables
+     # use properties to define compilation
+     # properties
+     CC = g++
+     CFLAGS = -Wall
+
+   + Define rules for executable and for each source files
+     point: main.o point.o
+          $(CC) $(CFLAGS) -o point main.o point.o
+     main.o: main.cpp point.h
+          $(CC) $(CFLAGS) -c main.cpp
+     point.o: point.cpp point.h
+          $(CC) $(CFLAGS) -c point.cpp
+
+   + Add a 'clean' rule to make sure everything gets recompiled
+     clean:
+          rm point *.o
+   + Tell Compilier Where Things Are
+     - Define INCLUDE variable
+       INCLUDE = ../include
+   + Use -I flag to tell compiler to look in directory
+   + Use INCLUDE to point to .h file
+     main.o: main.cpp $(INCLUDE)/point.h
+           $(CC) $(CFLAGS) -I$(INCLUDE) -c main.cpp
+** Sample Makefile
+   #+begin_src C
+   CC = g++
+   CFLAGS = -Wall
+   INCLUDE = ../include
+   point: main.o point.o
+         $(CC) $(CFLAGS) -o point main.o point.o
+   main.o: main.cpp $(INCLUDE)/point.h
+         $(CC) $(CFLAGS) -I$(INCLUDE) -c main.cpp
+   point.o: point.cpp $(INCLUDE)/point.h
+         $(CC) $(CFLAGS) -I$(INCLUDE) -c point.cpp
+   clean:
+         rm -f point *.o
+   #+end_src
+* Tuesday September 5
+** Dynamic Arrays
+*** C-Style Arrays
+    #+begin_src C++
+    int vals[3];
+    int vals[3] = {1, 2, 3};
+    int *vals = new int [3];
+    // C++11 allows
+    int *vals = new int[3] {1, 2, 3};
+    #+end_src
+*** Class DArray
+    + Data members
+     #+begin_src C++
+     int len_; // or size_t
+     int *data_;
+     #+end_src
+    + Constructor
+      #+begin_src C++
+      Darray(int len = 5) {
+          len_ = len;
+          data_ = new int[len_];
+      }
+      #+end_src
+    + Access
+      - Make it act like a normal array
+         #+begin_src C++
+         int operator[] (int index) const {
+             return data_[index];
+         }
+         int& operator[] (int index) {
+             return data_[index];
+         }
+         #+end_src
+    + Resize
+      - Need to
+        - allocate a new array
+        - copy existing data
+        - delete old array
+        - set data members
+      #+begin_src C++
+      void resize(int size) {
+          int *newdata = new int[size];
+          for(int i = 0; i<len_ && i<size; i++) {
+              newdata[i] = data_[i];
+          }
+          delete[] data;
+          data_ = newdata;
+          len_ = size;
+      }
+      #+end_src
+*** Problems
+    + Assignment is an operator
+    + The default operator copies the data members
+      - just copies the address in the pointer
+** Const
+*** How to read const
+     + const says things cannot be altered
+      #+begin_src C++
+      const int pi = 3; // must initialize
+      const int * vp;   // * to const int
+      int const * vp;   // same
+      int * const cp;   // const * to varying int
+      #+end_src
+     + Const modifies token to left
+         - read right to left
+         - if on far left, move over 1 to right
+*** Const in Methods
+    + Can declare return type const
+      #+begin_src C++
+      const int val() {...}
+      #+end_src
+    + Can declare the method cannot change data members
+       #+begin_src C++
+       int val() const {...}
+       #+end_src
+*** Const in Parameters
+    + Parameters can be const
+    + One imoport use- cheat the pass-by-value cost
+      #+begin_src C++
+      void method (Bigobject b) {...}
+      void method (Bigobject& b) {...}
+      void method (Bigobject& b) {...}
+      /*
+      The first has an expensive copy cost, the second makes b
+      changeable in the method, and the third saves the copy but
+      no changes are allowed
+      */
+      #+end_src
+*** Issues with const
+    + const is infectious
+      - If osmething is made const, then code it uses also needs to be const
+        to gurantee no changes
+** The Rule of Three (or Five)
+   + When a class manages a resouce
+     - new memory
+     - open file
+   + Acquire resource in constructor
+   + Need an explicit (destructor, copy constructor)
+   #+begin_src C++
+   ~Darray()
+   Darray(const DArray& other)
+   Darray& operator=(const DArray& other)
+   #+end_src
+*** Copy Constructor
+    #+begin_src C++
+    Darray(const DArray& other) {
+        len_ = other.len_;
+        data_ = new int[len_];
+        for(int i = 0; i < len_; i++) {
+            data_[i] = other.data_[i];
+        }
+    }
+    #+end_src
+** Class Example
+   #+begin_src C++
+   /*
+   DArrray.h
+   */
+   class DArray {
+       private:
+            int* data_;                           // Points 2 array of integers
+            size_t len_;
+       public:
+            DArray(int len= 5) : len_(len) {      // Constructor
+               data_ = new int[len_]
+            }
+
+            ~DArray() {                           // Destructor
+               delete [] data_;
+            }
+
+            int operator[](unsigned int index) const {  // Getter
+                return data_[index];
+            }
+
+            int& operator[](unsigned int index) { // Setter
+                return data_[index];
+            }
+
+            size_t length() const {
+                return len_;
+            }
+
+            void resize(unsigned int size) {
+                int* newdata = new int[size];
+                for(unsigned int i = 0; i < len_ && i < size; i++) {
+                    newdata[i] = data_[i];
+                }
+                delete [] data_;
+                len_ = size;
+                data_ = new_data;
+            }
+   };
+   /*
+   main.cpp
+   */
+   #include "DArray.h"
+   #include <iostream>
+   using namespace std;
+
+   int main() {
+       DArray myArray(3);
+       int val = myArray[0];
+
+       cout << val << endl;
+
+   }
+   /* Compiles with: g++ -o DTest main.cpp */
+   #+end_src
+* Thursday September 7
+** Rule of Three
+   + When a class manages a resource
+     - new memory
+     - open file
+   + Acquire resource in constructor
+   + Need an explicit
+     - Destructor
+     - copy constructor
+     - assignment operator
+   i.e.
+   #+begin-src C++
+   ~Darray();
+   Darray(const Darray& other);
+   Darray& operator=(const Darray& other);
+   #+end_src
+*** Copy Constructor
+    + Perform deep copy
+      - allocate mem
+      - copy vals
+      - do not modify other
+    #+begin_src C++
+    Darray(const Darray& other) {
+       len_ = other.len_;
+       data_ = new int[len_];
+       for (int i = 0; i < len_; i++) {
+          data_[i] = other.data_[i];
+       }
+    }
+    #+end_src
+*** Assignment
+    #+begin_src C++
+    Darray& operator=(const DArray& other) {
+       if (this != other) {
+          swap(data_, other.data_);
+          swap(len_, other.len_);
+       }
+       return *this;
+    }
+    #+end_src
+** C++ Strings
+   + String object
+     - not just raw memory and a pointer
+     - use #include<string>
+     - mutable
+   + Methods
+     - substr
+     - append
+     - c_str()
+     - find
+** Vectors
+   + Templated dynamic array
+     - vector<string> myStrings;
+   + Unsafe access with [];
+   + Exception throwing with at()
+   + Size()
+   + push_back: expands size by 1
+   + resize(n)
+** Tries
+   + A trie is a specialized tree
+     - binary has left and right
+     - a trie has as many branches as in the alphabet used
+
+   + A trie stores words in the given alphabet
+   + The words are implicit in the chosen branch
+   + A flag determines if it is a valid word at that node
+   + Each node has an array of potential
+
+* Tuesday September 12
+
+** C++ Review
+  + A constructor is called
+    - when a local varibale is declared
+      - when an object is constructed, all its data member constructors are
+        called
+    - when new is called to allocate an object
+  + A destructor is called
+    - when local variable leaves scope
+    - when delete is called on a pointer to an object
+
+** Data Structures
+   + What would a binary tree node look like?
+     #+begin_src C++
+     class BT {
+       private:
+          BT* left_;
+          BT* right_;
+          int* val;
+       public:
+          BT() {left_ = right_ = nullptr;
+                val = counter++;}
+          ~BT*()
+          BT* getLeft() {return left_;}
+          BT* getRight() {return right_;}
+          void addLeft() {left_ = new BT();}
+          void addRight() {right_ = new BT();}
+     };
+     #+end_src
+
+** Templates
+   + Meta-programming
+     - a description of what code should look like
+   + Just add template<class T>
+
+   + Code not generated until compile time
+   + Code all in header (.h) file
+   + Templates are recipes for generating code
+     - when code varies only by type, it is a good candidate
+   There are:
+   1. function templates
+   2. class templates
+
+   #+begin_src C++
+   int max(int value1, int value2) {
+      if(value1 > value2) {
+         return value1;
+      }
+      return value2;
+   }
+   /* Template format */
+   template <typename T>
+   T max(T value1, T value2) {
+     if(value1 > value2) {
+        return value1;
+     }
+     return value2;
+   }
+   #+end_src
+
+*** Calling a Function Template
+    + Call with the type in <> after the template function name
+      #+begin_src C++
+      int v1 = 1;
+      int v2 = 5;
+      int bigger = max<int>(v1, v2);
+      #+end_src
+
+*** Template Specialization
+    + The max template depends on the > operator being defined for
+      that type
+    + If the behavior is not what you want you can make a template
+      speicalization
+
+    #+begin_src C++
+    template <>
+    char max<char> (char value1, char value2) {
+       if(toupper(value1) > toupper(value2)) {
+          return value1;
+       }
+       return value2;
+    }
+    #+end_Src
+
+** Template Classes
+   + Template classes are often container classes
+
+   #+begin_src C++
+   template <class T>
+   class Hold {
+     private:
+         T it;
+     public:
+         Hold(T in) : it(in) {}
+         void set_it(T in) {it = in;}
+         T get_it() {return it;}
+   };
+   /* Calling Template class  */
+   Hold<int> me(2);
+   me.set_it(3);
+   #+end_src
+
+** Iterators
+   + Iterators abstract traversal of conatiner classes
+     - provide access to elements
+     - pairs of iterators represent a range
+     - provide a not-found or out-of-bounds mechanism
+
+*** Declaring an Iterator
+    + Iterators are types within the class
+      - Access from class name
+    + For a vector
+      #+begin_src C++
+      vector<int> values;
+      vector<int>::iterator it;
+      it = values.begin();
+      #+end_src
+
+    + Classes that support iterators provide a begin() and end()
+    + Iterators use pointer-like syntax to access elements
+      - No bounds checking
+    Some Nice Things
+    + Iterators are big type names
+    + Use auto
+      - assigns the type automatically
+      - not to make a variable have different types
+    #+begin_src C++
+    for(auto it = users.begin()); it != users.end(); i++) {}
+    #+end_src
+    Range Based Loops
+    + Use a loop over a collection
+    + Loop variable takes on value of each element in a collection
+      #+begin_src C++
+      for(auto e: users) {
+         cout << e.first <<  endl
+      }
+      #+end_src
+
+** STL Algorithms
+   + Along with useful classes, there are a set of useful algorithms that work
+     with STL classes
+   + Tend to be functions that work on iterators
+     - very general interface
+     - some classes have similar methods that might do more custom behavior
+
+** Set Testing
+   + all_of, any_of, none_of are ways to encorperate a boolean expression for multiple elements
+   + for_each applies a function to all elements
+   + Copy elements
+     - deep copy depends on element =
+     - range and then destination iterator
+   + Sort in place
+   + Min Element
+
+* Tuesday September 19
+
+** Testing of Software
+   + Not just bug finding
+     - assessment of overall fitness relative to the purpose of the software
+
+*** Importance of Testing
+   + Software Development lifecycle (SDLC)
+| Stage of the SDLC | Cost to Fix Details |
+|-------------------+---------------------|
+| Requirements      |                  1x |
+| Design            |                  2x |
+| Coding            |                  5x |
+| Testing           |                 10x |
+| Production        |                 30x |
+*** Types of Testing
+   1. Unit Testing: Testing of individual software components
+   2. Functional/System testing: testing based on analysis of the spec
+   3. User Acceptance: Formal testing with respect to user needs
+   4. Integration Testing: Testing performed to expose defects in interfaces
+   5. Performance Testing: Determine performance of software
+   6. Load Testing: Evaluate behavior of system with increasing load
+
+*** Styles of Testing
+    + Static
+      - code review
+      - automated tools
+        - lint, cppcheck
+    + Dynamic
+      - executing code
+        - test cases
+      - testing frameworks
+    + White Box
+      - tests internal structures of the code
+      - excersise execution paths to uncover problems
+    + Black box
+      - tests functionallity
+      - use case testing
+      - no code knowledge required
+
+*** C++ Tools
+    + g++ -Wall
+      - enables all warnings for questionable code
+    + g++ -pedantic
+      - issue warnings based on strict ISO C++
+    + g++ -Wextra
+      - a few more than all
+
+    Assertions are designed to catch programming errors, help document program logic
+    + Assert
+      - in <cassert>
+      - void assert(int expression)
+      - if expression == 0
+        - write error message, and abort
+
+*** Testing Frameworks
+    + CppUnit
+    + GoogleTest
+      - Unit Testing
+      - Turn informal test programs into more formal process
+
+*** GoogleTest
+    + Tests should be independent, repeatable and organized
+
+    Running Tests
+    + test code includes "gtest/gtest.h"
+    + main must call
+      - InitGoogleTest and RUN_ALL_TESTS()
+    + Compile has -L and -l and links to
+      - -lgtest -lgtest_main -lpthread
+    + Example
+      #+begin_src C
+      g++ -o pointersTest -std=c++11 pointers.o pointersTest.cpp -L ../googletest/googltest
+        -I ../googletest/googletest/include -lgtest -lgtest_main -lpthread
+      #+end_src
+
+** Handling Errors
+   + One way
+     - return value for status
+     - pass-by-ref for data
+   + Three issues
+     - error propogation
+     - constructors
+     - readability
+   #+begin_src C++
+   int A() {
+      if (error) return -1;
+   }
+   int B() {
+      int err = A();
+      if (err) return -1;
+   }
+   int main {
+      int err = B();
+   }
+   #+end_src
+
+*** Errors In Constructors
+    + Constructors do not return a vlaue
+      - how would we get errors out?
+
+*** Readbility
+    + Error Codes intersperese 'the good case' with the bad case'
+
+*** Try-Throw-Catch
+    + Put the 'good case' in the try
+    + Put the 'bad case' in the catch
+    + The code called in the try can throw
+
+      #+begin_src C++
+      int main() {
+         try {
+            openFile();
+            prepareRead();
+            readLine();
+            convert();
+            write();
+         }
+         catch(...) {  // Catch all
+            if(open())
+               closeFile();
+         }
+      }
+      #+end_src
+    Catch Options
+    + Catch all
+      - catch (...)
+    + integer
+      - catch(int i)
+    + std::exception
+      - catch(std::exception &e)
+        - has a string what() method
+    + Any C++ object
+
